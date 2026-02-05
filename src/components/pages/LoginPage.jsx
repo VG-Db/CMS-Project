@@ -10,9 +10,45 @@ export function LoginPage() {
   const handleLogin = e => {
     e.preventDefault()
 
-    // Check for admin credentials
-    if (email === "admin@gmail.com" && password === "1234") {
-      toast.success("Login successful! Redirecting to admin panel...", {
+    // Define user credentials with roles
+    const users = [
+      {
+        email: "admin@gmail.com",
+        password: "1234",
+        role: "admin",
+        redirect: "/admin/dashboard"
+      },
+      {
+        email: "programmanager@gmail.com",
+        password: "1234",
+        role: "program-manager",
+        redirect: "/admin/dashboard"
+      },
+      {
+        email: "programofficer@gmail.com",
+        password: "1234",
+        role: "program-officer",
+        redirect: "/admin/dashboard"
+      },
+      {
+        email: "designer@gmail.com",
+        password: "1234",
+        role: "graphic-designer",
+        redirect: "/admin/dashboard"
+      },
+      {
+        email: "onethsayakkara@gmail.com",
+        password: "1234",
+        role: "user",
+        redirect: "/"
+      }
+    ]
+
+    // Find matching user
+    const user = users.find(u => u.email === email && u.password === password)
+
+    if (user) {
+      toast.success(`Login successful! Redirecting to ${user.role === 'user' ? 'home page' : 'admin panel'}...`, {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -25,33 +61,11 @@ export function LoginPage() {
       localStorage.setItem("email", email)
       localStorage.setItem("password", password)
       localStorage.setItem("logged", "true")
-      localStorage.setItem("role", "admin")
+      localStorage.setItem("role", user.role)
 
-      // Redirect to admin panel after short delay
+      // Redirect after short delay
       setTimeout(() => {
-        window.location.href = "/admin/dashboard"
-      }, 2000)
-    }
-    // Check for user credentials
-    else if (email === "onethsayakkara@gmail.com" && password === "1234") {
-      toast.success("Login successful! Redirecting to home page...", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      })
-
-      // Save to localStorage
-      localStorage.setItem("email", email)
-      localStorage.setItem("password", password)
-      localStorage.setItem("logged", "true")
-      localStorage.setItem("role", "user")
-
-      // Redirect to home page after short delay
-      setTimeout(() => {
-        window.location.href = "/"
+        window.location.href = user.redirect
       }, 2000)
     }
     else {

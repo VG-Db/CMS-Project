@@ -290,12 +290,12 @@ export function UserProfilePage() {
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => (window.location.href = "/")}
               >
-                <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                  UC
-                </div>
-                <span className="hidden sm:block font-bold text-lg text-slate-900">
-                  Universal Curricula
-                </span>
+                <img
+                  src="/logo2.png"
+                  alt="TrainHub Logo"
+                  className="w-12 h-12"
+                />
+
               </div>
             </div>
 
@@ -365,7 +365,7 @@ export function UserProfilePage() {
                     <span className="text-sm font-semibold text-slate-900">
                       Oneth Sayakkara
                     </span>
-                     <span className="text-xs px-1.5 py-0.5 text-blue-700 rounded font-medium">
+                    <span className="text-xs px-1.5 py-0.5 text-blue-700 rounded font-medium">
                       Learner
                     </span>
                   </div>
@@ -493,10 +493,9 @@ export function UserProfilePage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`
                   flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors
-                  ${
-                    activeTab === tab.id
-                      ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                  ${activeTab === tab.id
+                    ? "border-blue-600 text-blue-600"
+                    : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
                   }
                 `}
               >
@@ -794,11 +793,10 @@ export function UserProfilePage() {
                     <button
                       key={filter}
                       onClick={() => setCertFilter(filter)}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                        certFilter === filter
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${certFilter === filter
                           ? "bg-blue-600 text-white"
                           : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                      }`}
+                        }`}
                     >
                       {filter.toUpperCase()}
                     </button>
@@ -829,13 +827,12 @@ export function UserProfilePage() {
                       className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow flex items-start gap-4"
                     >
                       <div
-                        className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          achievement.type === "gold"
+                        className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${achievement.type === "gold"
                             ? "bg-amber-100 text-amber-600"
                             : achievement.type === "silver"
-                            ? "bg-slate-100 text-slate-500"
-                            : "bg-orange-100 text-orange-600"
-                        }`}
+                              ? "bg-slate-100 text-slate-500"
+                              : "bg-orange-100 text-orange-600"
+                          }`}
                       >
                         {achievement.icon === "trophy" ? (
                           <Trophy className="w-6 h-6" />
@@ -876,7 +873,7 @@ export function UserProfilePage() {
                         className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow group"
                       >
                         <div
-                          
+
                         />
                         <div className="p-6">
                           <div className="flex justify-between items-start mb-4">
@@ -903,7 +900,7 @@ export function UserProfilePage() {
 
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleViewCertificate(cert)}
+                              onClick={() => window.open('/pdf/ABDULLAHI MUSA_UTC 5.pdf', '_self')}
                               className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium rounded-lg text-sm transition-colors"
                             >
                               <Eye className="w-4 h-4" />
@@ -1052,13 +1049,12 @@ export function UserProfilePage() {
                           {activity.status && (
                             <span
                               className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium mt-2 capitalize
-                            ${
-                              activity.status === "completed"
-                                ? "bg-green-100 text-green-700"
-                                : activity.status === "passed"
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-blue-100 text-blue-700"
-                            }`}
+                            ${activity.status === "completed"
+                                  ? "bg-green-100 text-green-700"
+                                  : activity.status === "passed"
+                                    ? "bg-amber-100 text-amber-700"
+                                    : "bg-blue-100 text-blue-700"
+                                }`}
                             >
                               {activity.status}
                             </span>
@@ -1240,7 +1236,7 @@ export function UserProfilePage() {
           }}
         />
       )}
-      <Footer/>
+      <Footer />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Menu, ChevronRight, Search, Bell } from 'lucide-react'
 
 const menuItems = [
@@ -42,6 +42,28 @@ const menuItems = [
 
 export const TopBar = ({ collapsed, setSidebarOpen, currentPage = "dashboard" }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [userEmail, setUserEmail] = useState("")
+
+    useEffect(() => {
+      const email = localStorage.getItem("email") || ""
+      
+      setUserEmail(email)
+    }, [])
+
+
+    const getUserInitials = (email) => {
+    if (!email) return "U"
+    
+    // If email has a name before @
+    const namePart = email.split('@')[0]
+    const names = namePart.split(/[._-]/)
+    
+    if (names.length >= 2) {
+      return (names[0][0] + names[1][0]).toUpperCase()
+    }
+    
+    return namePart.substring(0, 2).toUpperCase()
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200">
@@ -134,7 +156,7 @@ export const TopBar = ({ collapsed, setSidebarOpen, currentPage = "dashboard" })
 
           {/* Profile */}
           <div className="w-8 h-8 bg-slate-900 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-            AD
+            {getUserInitials(userEmail)}
           </div>
         </div>
       </div>

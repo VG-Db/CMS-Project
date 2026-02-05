@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   ArrowLeft,
   ChevronRight,
@@ -22,11 +22,15 @@ import {
   Check,
   FileText,
   Heart,
-  Shield
+  Shield,
+  LogIn
 } from "lucide-react"
 import { Header } from "../Header"
 import { Footer } from "../Footer"
 import { ScrollToTop } from "../ScrollToTop"
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { useNavigate } from "react-router-dom"
 
 // UTC Courses
 const utcCourses = [
@@ -96,6 +100,7 @@ const utcCourses = [
     icon: Award
   }
 ]
+
 // UPC Courses
 const upcManagerCourses = [
   {
@@ -171,6 +176,7 @@ const upcManagerCourses = [
     icon: UserPlus
   }
 ]
+
 const upcPractitionerTracks = [
   {
     title: "Family-based Prevention",
@@ -223,6 +229,7 @@ const upcPractitionerTracks = [
       "Primary evaluation methods with focus on monitoring and process evaluation for measuring outcomes."
   }
 ]
+
 // URC Courses
 const urcCourses = [
   {
@@ -246,6 +253,7 @@ const urcCourses = [
     icon: Heart
   }
 ]
+
 const curriculumData = {
   upc: {
     title: "Universal Prevention Curriculum",
@@ -290,32 +298,93 @@ Both of the URC courses focus on equipping participants with core competencies a
       "Both of the URC courses focus on equipping participants with core competencies and skills to work as a recovery support professional."
   }
 }
+
 export function CurriculumDetailsPage() {
+  const navigate = useNavigate()
+  
   // Get curriculum ID from URL
   const path = window.location.pathname
   const curriculumId = path.split("/").pop()
   const curriculum = curriculumData[curriculumId] || curriculumData.upc
+  
   const [activeTab, setActiveTab] = useState("managers")
   const [expandedTrack, setExpandedTrack] = useState(null)
   const [selectedCourses, setSelectedCourses] = useState([])
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  
+  // Check login status on component mount
+  useEffect(() => {
+    const logged = localStorage.getItem("logged") === "true"
+    setIsLoggedIn(logged)
+  }, [])
+  
   const totalHours = curriculum.courses.reduce(
     (sum, course) => sum + (course.hours || 0),
     0
   )
+  
   const toggleCourseSelection = courseCode => {
+    if (!isLoggedIn) {
+      navigate("/login")
+      return
+    }
+    
     setSelectedCourses(prev =>
       prev.includes(courseCode)
         ? prev.filter(c => c !== courseCode)
         : [...prev, courseCode]
     )
   }
+  
   const calculateTotalHours = () => {
     return curriculum.courses
       .filter(course => selectedCourses.includes(course.code))
       .reduce((sum, course) => sum + (course.hours || 0), 0)
   }
+  
+  const handleApplyForCourses = () => {
+    if (!isLoggedIn) {
+      navigate("/login")
+      return
+    }
+    
+    if (selectedCourses.length === 0) {
+      toast.warning("Please select at least one course to apply", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      })
+      return
+    }
+    
+    // Show success message
+    toast.success(
+      `Application submitted successfully! You've applied for ${selectedCourses.length} course(s). Please wait for admin approval.`,
+      {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    )
+    
+    // Optional: Clear selected courses after submission
+    setTimeout(() => {
+      setSelectedCourses([])
+    }, 2000)
+    
+    // Here you would typically make an API call to submit the application
+    console.log("Applied for courses:", selectedCourses)
+  }
+  
   return (
     <div>
+      <ToastContainer />
       <Header />
       <div className="min-h-screen bg-white">
         <div className="bg-white border-b border-slate-200">
@@ -537,20 +606,22 @@ export function CurriculumDetailsPage() {
         )}
 
         {/* Learning Path Builder */}
-        {selectedCourses.length > 0 && (
+        {isLoggedIn && selectedCourses.length > 0 && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="border-2 border-slate-900 rounded-lg p-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2">
                     Your Learning Path
                   </h3>
                   <p className="text-slate-600">
-                    {selectedCourses.length} courses selected •{" "}
-                    {calculateTotalHours()} total hours
+                    {selectedCourses.length} course{selectedCourses.length > 1 ? 's' : ''} selected • {calculateTotalHours()} total hours
                   </p>
                 </div>
-                <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                <button 
+                  onClick={handleApplyForCourses}
+                  className="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Apply For Courses
                 </button>
               </div>
@@ -625,6 +696,7 @@ export function CurriculumDetailsPage() {
                         course={course}
                         selectedCourses={selectedCourses}
                         toggleCourseSelection={toggleCourseSelection}
+                        isLoggedIn={isLoggedIn}
                       />
                     ))}
                   </div>
@@ -657,13 +729,14 @@ export function CurriculumDetailsPage() {
               >
                 {curriculum.courses.map((course, index) =>
                   curriculumId === "urc" ? (
-                    <URCCourseCard key={index} course={course} />
+                    <URCCourseCard key={index} course={course} isLoggedIn={isLoggedIn} />
                   ) : (
                     <CourseCard
                       key={index}
                       course={course}
                       selectedCourses={selectedCourses}
                       toggleCourseSelection={toggleCourseSelection}
+                      isLoggedIn={isLoggedIn}
                     />
                   )
                 )}
@@ -680,12 +753,22 @@ export function CurriculumDetailsPage() {
               Join thousands of professionals making a global impact through
               evidence-based training.
             </p>
-            <button className="px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300" >
-              <a href="/register">
-              Begin Enrollment Process
-              </a>
-              
-            </button>
+            {isLoggedIn ? (
+              <button 
+                onClick={() => window.location.href = "/register"}
+                className="px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300"
+              >
+                Begin Enrollment Process
+              </button>
+            ) : (
+              <button 
+                onClick={() => navigate("/login")}
+                className="px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300 inline-flex items-center gap-2"
+              >
+                <LogIn className="w-5 h-5" />
+                Sign In to Enroll
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -694,8 +777,11 @@ export function CurriculumDetailsPage() {
     </div>
   )
 }
+
 // Course Card Component
-function CourseCard({ course, selectedCourses, toggleCourseSelection }) {
+function CourseCard({ course, selectedCourses, toggleCourseSelection, isLoggedIn }) {
+  const isSelected = selectedCourses.includes(course.code)
+  
   return (
     <div className="bg-white rounded-lg border-2 border-slate-200 hover:border-slate-300 transition-all duration-300 overflow-hidden group">
       <div className="p-6">
@@ -721,29 +807,59 @@ function CourseCard({ course, selectedCourses, toggleCourseSelection }) {
         </p>
 
         <div className="flex gap-2">
-          <button
-            onClick={() => toggleCourseSelection(course.code)}
-            className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all text-sm ${selectedCourses.includes(course.code)
-                ? "bg-slate-900 text-white"
-                : "border-2 border-slate-200 text-slate-700 hover:border-slate-300"
+          {isLoggedIn ? (
+            <button
+              onClick={() => toggleCourseSelection(course.code)}
+              className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
+                isSelected
+                  ? "bg-slate-900 text-white"
+                  : "border-2 border-slate-200 text-slate-700 hover:border-slate-300"
               }`}
-          >
-            {selectedCourses.includes(course.code) ? (
-              <span className="flex items-center justify-center gap-2">
-                <Check className="w-4 h-4" />
-                Added
-              </span>
-            ) : (
-              "Add to Path"
-            )}
-          </button>
+            >
+              {isSelected ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Check className="w-4 h-4" />
+                  Added
+                </span>
+              ) : (
+                "Add to Path"
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={() => toggleCourseSelection(course.code)}
+              className="flex-1 px-4 py-2 rounded-lg font-semibold transition-all text-sm border-2 border-blue-600 text-blue-600 hover:bg-blue-50 inline-flex items-center justify-center gap-2"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign In for More
+            </button>
+          )}
         </div>
       </div>
     </div>
   )
 }
+
 // URC Course Card Component
-function URCCourseCard({ course }) {
+function URCCourseCard({ course, isLoggedIn }) {
+  const navigate = useNavigate()
+  
+  const handleButtonClick = () => {
+    if (!isLoggedIn) {
+      navigate("/login")
+      return
+    }
+    
+    toast.info("Course details coming soon!", {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    })
+  }
+  
   return (
     <div className="bg-white rounded-lg border-2 border-slate-200 hover:border-slate-300 transition-all duration-300 overflow-hidden">
       <div className="p-8">
@@ -774,13 +890,27 @@ function URCCourseCard({ course }) {
           </p>
         </div>
 
-        <button className="w-full px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors">
-          View Course Details
-        </button>
+        {isLoggedIn ? (
+          <button 
+            onClick={handleButtonClick}
+            className="w-full px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            View Course Details
+          </button>
+        ) : (
+          <button 
+            onClick={handleButtonClick}
+            className="w-full px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors inline-flex items-center justify-center gap-2"
+          >
+            <LogIn className="w-5 h-5" />
+            Sign In for More
+          </button>
+        )}
       </div>
     </div>
   )
 }
+
 // Practitioner Series Component (for UPC)
 function PractitionerSeries({ tracks, expandedTrack, setExpandedTrack }) {
   return (

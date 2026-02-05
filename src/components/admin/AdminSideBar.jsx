@@ -1,78 +1,29 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
-  Home,
-  Users,
-  BookOpen,
-  GraduationCap,
-  UserPlus,
-  Award,
-  Newspaper,
-  BarChart3,
-  Settings,
   LogOut,
   X
 } from "lucide-react"
-
-const menuItems = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: Home,
-    badge: null
-  },
-  {
-    id: "users",
-    label: "User Management",
-    icon: Users,
-    badge: 4
-  },
-  {
-    id: "curricula",
-    label: "Curricula",
-    icon: BookOpen,
-    badge: null
-  },
-  {
-    id: "courses",
-    label: "Courses",
-    icon: GraduationCap,
-    badge: 3
-  },
-  {
-    id: "enrollments",
-    label: "Enrollments",
-    icon: UserPlus,
-    badge: null
-  },
-  {
-    id: "certifications",
-    label: "Certifications",
-    icon: Award,
-    badge: 4
-  },
-  {
-    id: "content",
-    label: "Content & News",
-    icon: Newspaper,
-    badge: null
-  },
-  {
-    id: "reports",
-    label: "Reports & Analytics",
-    icon: BarChart3,
-    badge: null
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: Settings,
-    badge: null
-  }
-]
+import { getMenuItemsForRole } from "./Menuconfig"
 
 export function AdminSideBar({ currentPage, collapsed, setCollapsed, sidebarOpen, setSidebarOpen }) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [menuItems, setMenuItems] = useState([])
+  const [userRole, setUserRole] = useState("")
+  const [userEmail, setUserEmail] = useState("")
+
+  // Get user role from localStorage and set menu items
+  useEffect(() => {
+    const role = localStorage.getItem("role") || "admin"
+    const email = localStorage.getItem("email") || ""
+    
+    setUserRole(role)
+    setUserEmail(email)
+    
+    // Get menu items based on role
+    const items = getMenuItemsForRole(role)
+    setMenuItems(items)
+  }, [])
 
   // Auto-collapse on screens smaller than md
   useEffect(() => {
@@ -95,9 +46,48 @@ export function AdminSideBar({ currentPage, collapsed, setCollapsed, sidebarOpen
   }, [setCollapsed])
 
   const handleNavigation = (itemId) => {
-    const path = itemId === 'dashboard' ? '/admin' : `/admin/${itemId}`;
-    navigate(path);
-    setSidebarOpen(false); // Close sidebar on mobile after click
+    const path = itemId === 'dashboard' ? '/admin' : `/admin/${itemId}`
+    navigate(path)
+    setSidebarOpen(false) // Close sidebar on mobile after click
+  }
+
+  const handleLogout = () => {
+    // Clear localStorage
+    localStorage.removeItem("email")
+    localStorage.removeItem("password")
+    localStorage.removeItem("logged")
+    localStorage.removeItem("role")
+    
+    // Redirect to login page
+    window.location.href = "/login"
+  }
+
+  // Get user initials for avatar
+  const getUserInitials = (email) => {
+    if (!email) return "U"
+    
+    // If email has a name before @
+    const namePart = email.split('@')[0]
+    const names = namePart.split(/[._-]/)
+    
+    if (names.length >= 2) {
+      return (names[0][0] + names[1][0]).toUpperCase()
+    }
+    
+    return namePart.substring(0, 2).toUpperCase()
+  }
+
+  // Get role display name
+  const getRoleDisplayName = (role) => {
+    const roleNames = {
+      "admin": "Super Admin",
+      "program-manager": "Program Manager",
+      "program-officer": "Program Officer",
+      "graphic-designer": "Graphic Designer",
+      "user": "User"
+    }
+    
+    return roleNames[role] || "User"
   }
 
   return (
@@ -115,7 +105,7 @@ export function AdminSideBar({ currentPage, collapsed, setCollapsed, sidebarOpen
                 <span className="font-bold text-white text-sm">
                   Universal Curricula
                 </span>
-                <span className="text-xs text-slate-400">Admin Panel</span>
+                <span className="text-xs text-slate-400"> {getRoleDisplayName(userRole)}</span>
               </div>
             </div>
           ) : (
@@ -149,12 +139,12 @@ export function AdminSideBar({ currentPage, collapsed, setCollapsed, sidebarOpen
                 )}
               </div>
               {item.badge && !collapsed && (
-                <span className="hidden md:inline-flex px-2 py-1 rounded-full bg-white text-orange-500 text-xs font-bold ">
+                <span className="hidden md:inline-flex px-2 py-1 rounded-full bg-white text-orange-500 text-xs font-bold">
                   {item.badge}
                 </span>
               )}
               {item.badge && collapsed && (
-                <span className="hidden md:inline px-1 text-orange-500 text-xs font-bold">
+                <span className="absolute -top-1 -right-1 px-1.5 py-0.5 rounded-full bg-orange-500 text-white text-xs font-bold">
                   {item.badge}
                 </span>
               )}
@@ -168,6 +158,11 @@ export function AdminSideBar({ currentPage, collapsed, setCollapsed, sidebarOpen
                       {item.badge}
                     </span>
                   )}
+                  {item.description && (
+                    <div className="text-xs text-slate-300 mt-1">
+                      {item.description}
+                    </div>
+                  )}
                 </div>
               )}
             </button>
@@ -180,16 +175,21 @@ export function AdminSideBar({ currentPage, collapsed, setCollapsed, sidebarOpen
             <>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-white font-semibold">
-                  AD
+                  {getUserInitials(userEmail)}
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-semibold text-white">
-                    Admin User
+                  <div className="text-sm font-semibold text-white truncate">
+                    {userEmail.split('@')[0]}
                   </div>
-                  <div className="text-xs text-slate-400">Super Admin</div>
+                  <div className="text-xs text-slate-400">
+                    {getRoleDisplayName(userRole)}
+                  </div>
                 </div>
               </div>
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg transition-colors text-sm">
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg transition-colors text-sm"
+              >
                 <LogOut className="w-4 h-4" />
                 Logout
               </button>
@@ -197,9 +197,13 @@ export function AdminSideBar({ currentPage, collapsed, setCollapsed, sidebarOpen
           ) : (
             <div className="flex flex-col items-center gap-3">
               <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-white font-semibold">
-                AD
+                {getUserInitials(userEmail)}
               </div>
-              <button className="p-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg transition-colors" title="Logout">
+              <button 
+                onClick={handleLogout}
+                className="p-2 bg-slate-800 text-slate-300 hover:text-white rounded-lg transition-colors" 
+                title="Logout"
+              >
                 <LogOut className="w-4 h-4" />
               </button>
             </div>

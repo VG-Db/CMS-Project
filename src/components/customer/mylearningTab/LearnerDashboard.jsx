@@ -595,8 +595,8 @@ export function LearnerDashboard() {
                                                                 setShowViewDropdown(false)
                                                             }}
                                                             className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${viewFilter === "pending"
-                                                                    ? "bg-blue-50 text-blue-700"
-                                                                    : "text-slate-700 hover:bg-slate-50"
+                                                                ? "bg-blue-50 text-blue-700"
+                                                                : "text-slate-700 hover:bg-slate-50"
                                                                 }`}
                                                         >
                                                             <Clock className="w-4 h-4" />
@@ -610,8 +610,8 @@ export function LearnerDashboard() {
                                                                 setShowViewDropdown(false)
                                                             }}
                                                             className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${viewFilter === "completed"
-                                                                    ? "bg-blue-50 text-blue-700"
-                                                                    : "text-slate-700 hover:bg-slate-50"
+                                                                ? "bg-blue-50 text-blue-700"
+                                                                : "text-slate-700 hover:bg-slate-50"
                                                                 }`}
                                                         >
                                                             <CheckCircle className="w-4 h-4" />
@@ -625,8 +625,8 @@ export function LearnerDashboard() {
                                                                 setShowViewDropdown(false)
                                                             }}
                                                             className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${viewFilter === "browse"
-                                                                    ? "bg-blue-50 text-blue-700"
-                                                                    : "text-slate-700 hover:bg-slate-50"
+                                                                ? "bg-blue-50 text-blue-700"
+                                                                : "text-slate-700 hover:bg-slate-50"
                                                                 }`}
                                                         >
                                                             <Compass className="w-4 h-4" />
@@ -671,8 +671,8 @@ export function LearnerDashboard() {
                                             key={filter.id}
                                             onClick={() => setActiveFilter(filter.id)}
                                             className={`px-4 py-2 rounded-full font-medium text-sm transition-all duration-200 ${activeFilter === filter.id
-                                                    ? "bg-blue-600 text-white shadow-md"
-                                                    : "bg-white text-blue-600 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
+                                                ? "bg-blue-600 text-white shadow-md"
+                                                : "bg-white text-blue-600 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
                                                 }`}
                                         >
                                             {filter.label}
@@ -738,8 +738,8 @@ export function LearnerDashboard() {
                                                         {/* Stats Row */}
                                                         <div
                                                             className={`flex items-center ${isNotEnrolled
-                                                                    ? "justify-between"
-                                                                    : "justify-between"
+                                                                ? "justify-between"
+                                                                : "justify-between"
                                                                 } text-sm text-slate-500 mb-5`}
                                                         >
                                                             <div className="flex items-center gap-1.5">
@@ -855,10 +855,10 @@ export function LearnerDashboard() {
                                                         <div className="flex items-start gap-4">
                                                             <div
                                                                 className={`w-14 h-14 rounded-full bg-white border-2 ${achievement.type === "gold"
-                                                                        ? "border-amber-300"
-                                                                        : achievement.type === "silver"
-                                                                            ? "border-slate-300"
-                                                                            : "border-orange-300"
+                                                                    ? "border-amber-300"
+                                                                    : achievement.type === "silver"
+                                                                        ? "border-slate-300"
+                                                                        : "border-orange-300"
                                                                     } flex items-center justify-center flex-shrink-0`}
                                                             >
                                                                 <AchievementIcon
@@ -950,7 +950,10 @@ export function LearnerDashboard() {
                                                                     <Download className="w-4 h-4" />
                                                                     PDF
                                                                 </button>
-                                                                <button className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                                                                <button
+                                                                    onClick={() => window.open('/pdf/ABDULLAHI MUSA_UTC 5.pdf', '_self')}
+                                                                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+                                                                >
                                                                     <Eye className="w-4 h-4" />
                                                                     View
                                                                 </button>
