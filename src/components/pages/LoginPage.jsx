@@ -37,7 +37,7 @@ export function LoginPage() {
         redirect: "/admin/dashboard"
       },
       {
-        email: "onethsayakkara@gmail.com",
+        email: "learner@gmail.com",
         password: "1234",
         role: "user",
         redirect: "/"
