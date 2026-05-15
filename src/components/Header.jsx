@@ -249,7 +249,7 @@ export function Header() {
 
                                   <div className="hidden sm:flex flex-col items-start">
                     <span className="text-sm font-semibold text-slate-900">
-                      Oneth Sayakkara
+                      User Learer 
                     </span>
                     <span className="text-xs px-1.5 py-0.5 text-blue-700 rounded font-medium">
                       Learner
