@@ -379,7 +379,7 @@ export function UserProfilePage() {
                         Oneth Sayakkara
                       </p>
                       <p className="text-sm text-slate-500">
-                        onethsayakkara@gmail.com
+                        learner@gmail.com
                       </p>
                     </div>
                     <div className="py-2">

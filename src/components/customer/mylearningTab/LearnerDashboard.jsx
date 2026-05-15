@@ -510,7 +510,7 @@ export function LearnerDashboard() {
                                             <div className="px-4 py-3 border-b border-slate-200">
                                                 <p className="font-semibold text-slate-900">Oneth Sayakkara</p>
                                                 <p className="text-sm text-slate-500">
-                                                    onethsayakkara@gmail.com
+                                                    learner@gmail.com
                                                 </p>
                                             </div>
                                             <div className="py-2">
